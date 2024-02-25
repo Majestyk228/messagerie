@@ -27,7 +27,7 @@ class Gui:
         self.list_targets = list_targets
         
         # Logo de l'application
-        image = Image.open("C:/Users/Titan/Desktop/TKinter_Project/trojanworld_logo_clean.png")
+        image = Image.open("trojanworld_logo_clean.png")
         image = image.resize((32, 36), Image.NEAREST)
         self.photo = ImageTk.PhotoImage(image)
         self.image_label = Label(self.frame, image=self.photo)
