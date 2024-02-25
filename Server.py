@@ -49,33 +49,4 @@ class Server():
                 print("Cannot send the message")
 
 
-if __name__ == "__main__":
-    server= Server(59001)
-    # gui = Gui(['015b3or2iqfbnq', 'usia020u2cmbip', 'u5uvsb4epvbr4c', 'xjclld13j091ly', '9il7a640y2o1vb'])
-    thread = threading.Thread(target=server.run)
-    thread.daemon = True
-    thread.start()
-    message= ""
-    while message!="QUIT":
-        if(len(server.clients_addresses)>0):
-            print("list of client :")
-            for i in range(len(server.clients_addresses)):
-                print(i, server.clients_addresses[i])
-                
-            # gui.setTargetList(server.clients_addresses)
-            gui = Gui(server.clients_addresses)
-            try:
-                #idSelected= int(input("select client:"))
-                #idSelected = gui.on_select()
-                idSelected = 0
-            except ValueError:
-                print("Value Error, selected device 0")
-            # message= input("Enter message:")
-            message= "ipconfig"
-            if(message!="QUIT"):
-                server.clients_sockets[idSelected].sendall(message.encode("UTF-8"))
-                time.sleep(2)
-
-
-
 

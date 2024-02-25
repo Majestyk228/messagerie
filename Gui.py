@@ -1,6 +1,5 @@
 from tkinter import *
 from PIL import Image, ImageTk
-import threading
 
 import socket
 import signal #identifie les signaux pour kill le programme
@@ -8,6 +7,7 @@ import sys #utilisé pour sortir du programme
 import time
 import threading
 from ClientThread import ClientListener
+from Server import *
 
 class Gui:
         
@@ -56,6 +56,7 @@ class Gui:
         
         # Champ de texte pour le retour de commande
         self.cmd_return = Text(self.root, width=58, height=21, fg=self._from_rgb((0,0,0)), bg=self._from_rgb((255,255,255)))
+        self.cmd_return.config(state="disabled")
         self.cmd_return.place(x=215, y=53)
         
         # Bouton "Send"
@@ -69,14 +70,11 @@ class Gui:
         self.root.mainloop()
     
     def _from_rgb(self, rgb):
-        """translates an rgb tuple of int to a tkinter friendly color code"""
+        # TRANSLATE RGB VALUES INTO TKinter READABLE COLOR CODE
         return "#%02x%02x%02x" % rgb
 
-    def printt(self):
-        print("Command sent.")
-
     def cancel(self):
-        print("Text erased.")
+        self.cmd_entry.delete("1.0", END)
     
     def on_select(self, event):
         index = self.listbox.curselection()
@@ -95,13 +93,17 @@ class Gui:
         # Insérer les nouveaux éléments de list_targets dans la Listbox
         for target in targets:
             self.listbox.insert(END, target)
+            
+    def displayResponse(response):
+        self.cmd_return.delete("1.0", END)
+        self.cmd_return.insert(END, response)
 
 
-    def execute_command_every_second():
-        # Exécute la commande une fois
-        self.setTargetList(self.list_targets)
-        # Planifie l'exécution de la commande toutes les secondes
-        threading.Timer(1, setTargetList).start()
+    # def execute_command_every_second():
+    #     # Exécute la commande une fois
+    #     self.setTargetList(self.list_targets)
+    #     # Planifie l'exécution de la commande toutes les secondes
+    #     threading.Timer(1, setTargetList).start()
         
     
     
@@ -109,4 +111,34 @@ class Gui:
         # TAKES CONTENT OF cmd_entry AND PASSES IT TO SERVER
         text = self.cmd_entry.get("1.0", END)
         print("commande récupérée : ",text)
-        return(text)
+        server.clients_sockets[self.index].sendall(text.encode("UTF-8"))
+    
+
+if __name__ == "__main__":
+    server= Server(59001)
+    thread = threading.Thread(target=server.run)
+    thread.daemon = True
+    thread.start()
+    message= ""
+    while message!="QUIT":
+        if(len(server.clients_addresses)>0):
+            print("list of client :")
+            for i in range(len(server.clients_addresses)):
+                print(i, server.clients_addresses[i])
+                
+            # gui.setTargetList(server.clients_addresses)
+            gui = Gui(server.clients_addresses)
+            try:
+                #idSelected= int(input("select client:"))
+                #idSelected = gui.on_select()
+                idSelected = 0
+            except ValueError:
+                print("Value Error, selected device 0")
+            # # message= input("Enter message:")
+            
+            # if(message!="QUIT"):
+            #     server.clients_sockets[idSelected].sendall(message.encode("UTF-8"))
+            #     time.sleep(2)
+
+
+
