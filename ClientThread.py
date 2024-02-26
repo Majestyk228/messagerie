@@ -5,13 +5,14 @@ import time
 
 class ClientListener(threading.Thread):
 
-    def __init__(self, server, socket, address):
+    def __init__(self, server, socket, address, callback):
         super(ClientListener, self).__init__()
         self.server= server
         self.socket= socket
         self.address= address
         self.listening= True
         self.username= "No username"
+        self.callback= callback
 
     def run(self):
         while self.listening:
@@ -23,6 +24,8 @@ class ClientListener(threading.Thread):
             #self.handle_msg(data)
             try:
                 print(str(data, encoding="utf-8"))
+                if(self.callback is not None):
+                    self.callback(str(data, encoding="utf-8"))
             except UnicodeDecodeError:
                 print(str(data))
             time.sleep(0.1)

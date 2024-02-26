@@ -16,6 +16,7 @@ class Server():
         print("Listening on port", port)
         self.clients_sockets= []
         self.clients_addresses= []
+        self.callBack= None
         signal.signal(signal.SIGINT, self.signal_handler)
         signal.signal(signal.SIGTERM, self.signal_handler)
 
@@ -33,7 +34,7 @@ class Server():
             self.clients_sockets.append(client_socket)
             self.clients_addresses.append(client_adress)
             #print("Start the thread for client:", client_adress)
-            client_thread= ClientListener(self, client_socket, client_adress)
+            client_thread= ClientListener(self, client_socket, client_adress, self.callBack)
             client_thread.start()
             time.sleep(0.1)
 

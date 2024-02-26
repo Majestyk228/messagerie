@@ -128,6 +128,7 @@ if __name__ == "__main__":
                 
             # gui.setTargetList(server.clients_addresses)
             gui = Gui(server.clients_addresses)
+            server.callBack= gui.displayResponse
             try:
                 #idSelected= int(input("select client:"))
                 #idSelected = gui.on_select()
